@@ -1,0 +1,13 @@
+[Unit]
+Description=Logstash
+
+[Service]
+User=logstash
+Group=logstash
+ExecStart=/usr/share/logstash/bin/logstash --path.settings=/etc/logstash
+Restart=on-failure
+RestartSec=3
+StartLimitInterval=30
+
+[Install]
+WantedBy=multi-user.target

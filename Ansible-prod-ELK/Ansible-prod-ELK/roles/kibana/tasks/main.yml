@@ -1,0 +1,72 @@
+---
+- name: "Copying Kibana Installer"
+  copy:
+    src: "files/kibana-{{version}}.rpm"
+    dest: "/tmp/kibana-{{version}}.rpm"
+  become: true
+  register: kibana_installer_copied
+  tags: [kibana]
+
+- name: "Installing Kibana"
+  yum: 
+    name: /tmp/kibana-{{version}}.rpm
+    state: present
+  register: kibana_installed
+  tags: [kibana] 
+
+- name: "Installing Plugins"
+  copy: 
+    src: "files/plugins"
+    dest: "/usr/share/kibana/"
+    owner: kibana
+    group: kibana
+  become: yes
+  register: kibana_plugin
+  notify: kibana-restart
+- name: Cron Job 
+  become: yes
+  file:
+    path: "/cron_script"
+    state: directory
+  register: cron_directory
+  tags: [kibana]
+
+- name: Cron Job
+  become: yes
+  template:
+    src: "files/deletion.j2"
+    dest: "/cron_script/deletion.sh"
+    mode: '0777'
+  register: script
+  tags: [kibana]
+
+- name: Removing Bad Character
+  become: yes
+  command:  sed -i -e 's/\r$//' /cron_script/deletion.sh
+  ignore_errors: true
+
+- name: Creating Cron job
+  become: yes
+  cron:
+    name: "index_deletion"
+    minute: "0"
+    hour: "0"
+    job: "/cron_scripts/deletion.sh"
+
+- name: "Configuring Kibana"
+  template:
+    src: files/kibana.j2 
+    dest: /etc/kibana/kibana.yml
+  register: kibana_configure
+  become: yes
+  notify: kibana-restart
+  tags: [kibana]
+
+- name: "Enabling Kibana Service"
+  systemd:
+    name: kibana
+    state: started
+    enabled: yes
+  tags: [kibana]
+
+

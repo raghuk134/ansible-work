@@ -1,0 +1,22 @@
+---
+- name: "Setting Postgres Password"
+  command: su - postgres bash -c "psql -c \"ALTER USER postgres password '{{postgres_root_password}}';\""
+  args:
+    warn: false
+  become: yes
+  no_log: true
+  ignore_errors: true
+
+- name: "Updating Configuration"
+  template:
+    src: "files/pg_hba.j2"
+    dest: "/var/lib/pgsql/12/data/pg_hba.conf"
+  become: yes
+  notify: restart_postgresql
+
+- name: "Updating Configuration"
+  become: yes
+  template:
+    src: "files/postgres.j2"
+    dest: "/var/lib/pgsql/12/data/postgresql.conf"
+  notify: restart_postgresql

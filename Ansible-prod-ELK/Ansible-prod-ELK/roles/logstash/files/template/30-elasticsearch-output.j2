@@ -1,0 +1,73 @@
+output {
+
+ if "mbss_compliance_status" in [tags] {
+   elasticsearch {
+    index => "mbss-cs"
+    hosts => ["{{es1_ip}}:9200"]
+    user => "{{elastic_user}}"
+    password => "{{elastic_password}}"
+    document_id => "%{hostname}%{scan_date}"
+   }
+ }
+
+ if "mbss_weekly" in [tags] {
+   elasticsearch {
+    index => "mbss-weekly"
+    hosts => ["{{es1_ip}}:9200"]
+    user => "{{elastic_user}}"
+    password => "{{elastic_password}}"
+    document_id => "%{hostname}%{scan_date}%{compliant_status}"
+   }
+ }
+
+ if "mbss_full_latestdate" in [tags] {
+   elasticsearch {
+    index => "mbss_full_latestdate"
+    hosts => ["{{es1_ip}}:9200"]
+    user => "{{elastic_user}}"
+    password => "{{elastic_password}}"
+    document_id => "%{id}%{hostname}%{scan_date}"
+   }
+ }
+
+ if "mbss_checkno_complete" in [tags] {
+   elasticsearch {
+    index => "mbss-checkno-complete"
+    hosts => ["{{es1_ip}}:9200"]
+    user => "{{elastic_user}}"
+    password => "{{elastic_password}}"
+    document_id => "%{id}"
+   }
+ }
+
+ if "mbss_inventory_status" in [tags] {
+   elasticsearch {
+    index => "mbss-inventory-status"
+    hosts => ["{{es1_ip}}:9200"]
+    user => "{{elastic_user}}"
+    password => "{{elastic_password}}"
+    document_id => "%{ip address}"
+   }
+ }
+
+ if "consolidated_nc_checkno_report" in [tags] {
+   elasticsearch {
+    index => "consolidated-nc-checkno-report"
+    hosts => ["{{es1_ip}}:9200"]
+    user => "{{elastic_user}}"
+    password => "{{elastic_password}}"
+    document_id => "%{id}%{hostname}%{scan_date}"
+   }
+ }
+
+ else {
+   elasticsearch {
+        index => "logstash-%{+YYYY.MM.dd}"
+        #document_type => ""
+        hosts => ["{{es1_ip}}:9200"]
+	      user => "{{elastic_user}}"
+    	  password => "{{elastic_password}}"
+	      document_id => "%{serial no}%{hostname}%{scan_date}"
+   }
+ }
+}

@@ -1,0 +1,132 @@
+visualization.enhanced-table {
+  padding: 0px 5px; }
+
+.enhanced-table-vis kbn-enhanced-agg-table,
+.enhanced-table-vis kbn-enhanced-agg-table-group {
+  display: block; }
+
+.enhanced-table-vis .striped-rows .kbnAggTable__paginated tr:nth-child(odd) td {
+  background-color: #fcfcfd; }
+
+.enhanced-table-vis .striped-rows .kbnAggTable__paginated tr:hover td {
+  background-color: #F5F7FA; }
+
+.enhanced-table-vis .agg-table-group > tbody > tr > td {
+  padding: 0px 5px; }
+
+.enhanced-table-vis kbn-enhanced-agg-table-group > .table > tbody > tr > td {
+  border-top: 0px; }
+
+.enhanced-table-vis paginate-controls {
+  padding: 0px 5px; }
+
+.enhanced-table-vis kbn-enhanced-agg-table-group .table {
+  margin-bottom: 0px; }
+
+.enhanced-table-vis .hide-export-links .pagination-container {
+  display: none; }
+
+.enhanced-table-vis .hide-pagination paginate-controls {
+  display: none; }
+
+.enhanced-table-vis .filterInput {
+  border-color: #D9D9D9;
+  border-width: 1px;
+  box-shadow: none; }
+
+.enhanced-table-vis .filterInput:focus {
+  border-color: #0079a5; }
+
+.enhanced-table-vis .filterButton {
+  height: 33px; }
+
+.enhanced-table-vis .filterButton:disabled {
+  cursor: default;
+  opacity: 1; }
+
+.enhanced-table-vis .filterText {
+  padding-right: 20px; }
+
+.enhanced-table-vis .filterBar {
+  margin-top: 16px; }
+
+.enhanced-table-vis .text-left {
+  text-align: left; }
+
+.enhanced-table-vis .text-right {
+  text-align: right; }
+
+.enhanced-table-vis .text-center {
+  text-align: center; }
+
+.enhanced-table-vis .text-justify {
+  text-align: justify; }
+
+.theme-dark.enhanced-table-vis kbn-enhanced-agg-table,
+.theme-dark.enhanced-table-vis kbn-enhanced-agg-table-group {
+  display: block; }
+
+.theme-dark.enhanced-table-vis .striped-rows .kbnAggTable__paginated tr:nth-child(odd) td {
+  background-color: #2a2b34; }
+
+.theme-dark.enhanced-table-vis .striped-rows .kbnAggTable__paginated tr:hover td {
+  background-color: #25262E; }
+
+.theme-dark.enhanced-table-vis .agg-table-group > tbody > tr > td {
+  padding: 0px 5px; }
+
+.theme-dark.enhanced-table-vis kbn-enhanced-agg-table-group > .table > tbody > tr > td {
+  border-top: 0px; }
+
+.theme-dark.enhanced-table-vis paginate-controls {
+  padding: 0px 5px; }
+
+.theme-dark.enhanced-table-vis kbn-enhanced-agg-table-group .table {
+  margin-bottom: 0px; }
+
+.theme-dark.enhanced-table-vis .hide-export-links .pagination-container {
+  display: none; }
+
+.theme-dark.enhanced-table-vis .hide-pagination paginate-controls {
+  display: none; }
+
+.theme-dark.enhanced-table-vis .filterInput {
+  border-color: #D9D9D9;
+  border-width: 1px;
+  box-shadow: none; }
+
+.theme-dark.enhanced-table-vis .filterInput:focus {
+  border-color: #0079a5; }
+
+.theme-dark.enhanced-table-vis .filterButton {
+  height: 33px; }
+
+.theme-dark.enhanced-table-vis .filterButton:disabled {
+  cursor: default;
+  opacity: 1; }
+
+.theme-dark.enhanced-table-vis .filterText {
+  padding-right: 20px; }
+
+.theme-dark.enhanced-table-vis .filterBar {
+  margin-top: 16px; }
+
+.theme-dark.enhanced-table-vis .text-left {
+  text-align: left; }
+
+.theme-dark.enhanced-table-vis .text-right {
+  text-align: right; }
+
+.theme-dark.enhanced-table-vis .text-center {
+  text-align: center; }
+
+.theme-dark.enhanced-table-vis .text-justify {
+  text-align: justify; }
+
+.enhanced-table-vis-params .computed-columns .euiButtonIcon {
+  font-size: 0.8rem;
+  min-width: 12px;
+  padding: 0px; }
+
+.enhanced-table-vis-params .ng-invalid.ng-touched .form-control, .enhanced-table-vis-params .ng-invalid.display-error .form-control {
+  border-color: #BD271E; }

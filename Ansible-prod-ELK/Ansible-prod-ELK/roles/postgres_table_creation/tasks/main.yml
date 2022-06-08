@@ -1,0 +1,107 @@
+---
+- name: "Table Creation"
+  become: yes
+  template: 
+    src: "files/script.j2"
+    dest: "/tmp/script.sh"
+    mode: 777
+  ignore_errors: true
+  tags: [db_table]
+  
+- name: Create a new database
+  postgresql_db:
+    name: "{{postgres_db}}"
+    login_user: "{{postgres_root_user}}"
+    login_password: "{{postgres_root_password}}"
+    login_host: "{{db_ip}}"
+
+- name: "Creating User"
+  postgresql_user:
+    db: "{{postgres_db}}"
+    name: "{{postgres_user}}"
+    password: "{{postgres_user_password}}"
+    role_attr_flags: CREATEDB
+    login_user: "{{postgres_root_user}}"
+    login_password: "{{postgres_root_password}}"
+    login_host: "{{db_ip}}"
+
+# - name: "Restoring Tables"
+#   become: yes
+#   postgresql_db:
+#     name: "{{postgres_db}}"
+#     state: restore
+#     target: /tmp/backup.sql
+#     login_user: "{{postgres_user}}"
+#     login_password: "{{postgres_user_password}}"
+#     login_host: "{{db_ip}}"
+
+- name: Running script
+  become: yes
+  command: ./script.sh
+  args:
+    chdir: "/tmp"
+  ignore_errors: true
+
+- name: Cleaning
+  become: yes
+  file:
+    path: /tmp/script.sh
+    state: absent
+  ignore_errors: true
+
+- name: "Creating User"
+  postgresql_user:
+    db: "{{postgres_db}}"
+    name: "read_only"
+    login_user: "{{postgres_root_user}}"
+    login_password: "{{postgres_root_password}}"
+    login_host: "{{db_ip}}"
+
+- name: GRANT USAGE ON SCHEMA public
+  postgresql_privs:
+    state: present
+    db: "{{postgres_db}}"
+    privs: USAGE
+    type: schema
+    objs: public
+    role: read_only
+    login_user: "{{postgres_root_user}}"
+    login_password: "{{postgres_root_password}}"
+    login_host: "{{db_ip}}"
+
+- name: Grant Select to read only user
+  postgresql_privs:
+    state: present
+    db: "{{postgres_db}}"
+    privs: SELECT
+    type: table
+    objs: ALL_IN_SCHEMA
+    schema: public
+    role: read_only
+    login_user: "{{postgres_user}}"
+    login_password: "{{postgres_user_password}}"
+    login_host: "{{db_ip}}"
+
+- name: Grant sequence Permission
+  postgresql_privs:
+    state: present
+    db: "{{postgres_db}}"
+    privs: SELECT
+    type: sequence
+    objs: ALL_IN_SCHEMA
+    schema: public
+    role: read_only
+    login_user: "{{postgres_user}}"
+    login_password: "{{postgres_user_password}}"
+    login_host: "{{db_ip}}"
+
+- name: Creating Read_only User for backup
+  postgresql_user:
+    name: "{{postgres_backup_user}}"
+    password: "{{postgres_backup_password}}"
+    groups:
+      - read_only
+    login_user: "{{postgres_root_user}}"
+    login_password: "{{postgres_root_password}}"
+    login_host: "{{db_ip}}"
+  

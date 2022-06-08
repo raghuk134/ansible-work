@@ -1,0 +1,7 @@
+---
+version: "7.8.1"
+es1_ip: "{{ hostvars['es1'].ansible_host }}"
+db_ip: "{{hostvars['webserver'].ansible_host}}"
+kibana_ip: "{{hostvars['webserver'].ansible_host}}"
+monitoring_dashboard: "webserver"
+

@@ -1,0 +1,3 @@
+#!/bin/bash
+
+curl -X DELETE -u {{elastic_user}}:{{elastic_password}} "http://{{es1_ip}}:9200/check_no,inventory_status,host_inventory,mbss_output"

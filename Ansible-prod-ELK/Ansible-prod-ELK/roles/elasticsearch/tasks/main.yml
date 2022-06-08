@@ -1,0 +1,99 @@
+---
+- name: "Copying Elasticsearch installer"
+  copy:
+    src: "files/elasticsearch-{{version}}.rpm"
+    dest: "/tmp/elasticsearch-{{version}}.rpm"
+  become: true
+  register: l_installer_copied
+  tags: [elasticsearch]
+
+- name: "Installing Elasticsearch"
+  yum:
+    name: /tmp/elasticsearch-{{version}}.rpm
+    state: present
+  register: elasticsearch_installed
+  tags: [elasticsearch]
+
+- name: "Configuring elasticsearch"
+  template:
+    src: "files/elasticsearch-singlenode.yml" 
+    dest: "/etc/elasticsearch/elasticsearch.yml"
+  register: elasticsearch_configure
+  become: yes
+  notify: elasticsearch_restart
+  tags: [elasticsearch]
+
+- name: "Jvm Config elasticsearch"
+  copy:
+    src: "files/jvm.options" 
+    dest: "/etc/elasticsearch/jvm.options"
+  register: elasticsearch_jvm
+  become: true
+  notify: elasticsearch_restart
+  tags: [elasticsearch]
+
+- name: "Creating Data Directory"
+  file:
+    path: /usr/share/elasticsearch/data
+    state: directory
+    group: elasticsearch
+    owner: elasticsearch
+  register: es_data_directory
+  tags: [elasticsearch]
+  
+# - name: Directory for Scripts
+#   file:
+#     path: /cron_scripts
+#     state: directory
+#   register: script_data_directory
+#   tags: [elasticsearch]
+
+- name: "Changing File Permisisons"
+  file:
+    path: /usr/share/elasticsearch
+    recurse: yes
+    owner: elasticsearch
+    group: elasticsearch
+  register: es_file_permissions
+  tags: [elasticsearch]
+  
+- name: "Creating Backup Point"
+  file: 
+    path: /backup
+    state: directory
+    group: elasticsearch
+    owner: elasticsearch
+  register: elastic_backup_point
+  tags: [elasticsearch]
+
+- name: "Cheking For existing User"
+  shell: ./elasticsearch-users list | grep "{{elastic_user}}"   
+  args:
+     chdir: "/usr/share/elasticsearch/bin/"
+     executable: /bin/bash
+     warn: false
+  register: user_list
+  ignore_errors: true
+  no_log: true
+  tags: [elasticsearch]
+
+- name: "Creating User"
+  shell: ./elasticsearch-users useradd {{elastic_user}} -p {{elastic_password}} -r superuser
+  args:
+     chdir: "/usr/share/elasticsearch/bin"
+     executable: /bin/bash
+     warn: false
+  register: user_created
+  ignore_errors: true
+  notify: elasticsearch_restart
+  when: user_list.stdout == ""
+  tags: [elasticsearch]
+
+- name: "Enabling elasticsearch Service"
+  systemd:
+    name: elasticsearch
+    state: started
+    enabled: yes
+  tags: [elasticsearch]
+   
+

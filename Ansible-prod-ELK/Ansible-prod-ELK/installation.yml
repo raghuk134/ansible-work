@@ -1,0 +1,24 @@
+---
+
+# - hosts: es1
+#   name: "Installing ELK on RHEL"
+#   become: yes
+#   become_user: root
+#   vars_files:
+#      - defaults/main.yml
+#   roles:
+#     - {role: java}
+#     - {role: elasticsearch}
+- hosts: webserver
+  name: "Installing Web Applications"
+  become: yes
+  become_user: root
+  vars_files:
+   - defaults/main.yml
+  roles:
+   #- {role: java}
+   #- {role: kibana}
+   - {role: logstash}
+   #- {role: postgres}
+   # - {role: certificate}
+   # - {role: web}

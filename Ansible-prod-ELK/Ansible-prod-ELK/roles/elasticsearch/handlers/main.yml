@@ -1,0 +1,6 @@
+- name: "elasticsearch_restart"
+  systemd: 
+    name: elasticsearch
+    state: restarted
+  register: elasticsearch_restarted
+  tags: elasticsearch

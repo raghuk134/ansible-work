@@ -1,0 +1,59 @@
+---
+- name: Cron Job 
+  become: yes
+  file:
+    path: "/cron_script"
+    state: directory
+  register: cron_directory
+  tags: [cronjob]
+
+- name: Cron Job For ES
+  become: yes
+  template:
+    src: "files/deletion.j2"
+    dest: "/cron_script/deletion.sh"
+    mode: '0777'
+  register: script
+  tags: [cronjob]
+
+- name: Cron Job For DB Backup
+  become: yes
+  template:
+    src: "files/postgres_backup.j2"
+    dest: "/cron_script/postgres_backup.sh"
+    mode: '0777'
+  register: script
+  tags: [cronjob]
+
+- name: Cron Job
+  become: yes
+  template:
+    src: "files/pgpass.j2"
+    dest: "/var/lib/pgsql/10/data/.pgpass"
+    mode: '0600'
+  register: script
+  tags: [cronjob]
+
+- name: Removing Bad Character
+  become: yes
+  command:  sed -i -e 's/\r$//' {{ item}}
+  with_items:
+    - "/cron_script/deletion.sh"
+    - "/cron_script/postgres_backup.sh"
+  ignore_errors: true
+
+- name: Creating Cron job For ES
+  become: yes
+  cron:
+    name: "index_deletion"
+    minute: "0"
+    hour: "0"
+    job: "/cron_scripts/deletion.sh"
+
+- name: Creating Cron job For DB Backup
+  become: yes
+  cron:
+    name: "DB Backup"
+    minute: "0"
+    hour: "0"
+    job: "/cron_scripts/postgres_backup.sh"

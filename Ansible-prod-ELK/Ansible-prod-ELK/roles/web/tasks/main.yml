@@ -1,0 +1,50 @@
+---
+- name: "Copying Installer"
+  copy: 
+    src: "files/nginx-1.18.rpm"
+    dest: "/tmp/nginx-1.18.rpm"
+  register: nginx_installer_copy
+  tags: [webserver]
+- name: "Installing Nginx"
+  yum:
+    name: /tmp/nginx-1.18.rpm
+    state: present
+  register: nginx_installed
+  tags: [webserver]
+
+- name: "Removing Default Config"
+  file:
+    path: "/etc/nginx/conf.d/default.conf"
+    state: absent
+  become: yes
+  tags: [webserer]
+
+- name: "Enabling"
+  command: setsebool -P httpd_can_network_connect 1
+  become: yes
+  ignore_errors: true
+  tags: [webserver]
+
+- name: "Config Nginx"
+  template: 
+    src: "files/nginx.conf"
+    dest: "/etc/nginx/nginx.conf"
+  become: yes
+  register: nginx_main_conf
+  tags: [webserver]
+  
+- name: "Configuring Kibana"
+  template:
+    src: "files/conf.d/kibana.j2"
+    dest: "/etc/nginx/conf.d/kibana.conf"
+  become: yes
+  register: nginx_config_kibana
+  notify: nginx_restart
+  tags: [webserver]
+
+- name: "Enabling Service"
+  systemd: 
+    name: nginx
+    state: started
+    enabled: yes
+  tags: [webserver]

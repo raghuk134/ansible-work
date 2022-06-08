@@ -1,0 +1,80 @@
+input {
+ jdbc {
+        tags => ["mbss_compliance_status"]
+        clean_run => true
+        jdbc_connection_string => "jdbc:postgresql://localhost:5432/{{postgres_db}}"
+        jdbc_user => "{{postgres_user}}"
+        jdbc_password => "{{postgres_user_password}}"
+        jdbc_validate_connection => true
+        jdbc_driver_library => "/jdbc_driver/postgresql-9.4-1201-jdbc41.jar"
+        jdbc_driver_class => "org.postgresql.Driver"
+        schedule => "* * * * *"
+        statement_filepath => "/etc/logstash/sql_queries/mbss_compliance_status.sql"
+ }
+
+ jdbc {
+        tags => ["mbss_weekly"]
+        clean_run => true
+        jdbc_connection_string => "jdbc:postgresql://localhost:5432/{{postgres_db}}"
+        jdbc_user => "{{postgres_user}}"
+        jdbc_password => "{{postgres_user_password}}"
+        jdbc_validate_connection => true
+        jdbc_driver_library => "/jdbc_driver/postgresql-9.4-1201-jdbc41.jar"
+        jdbc_driver_class => "org.postgresql.Driver"
+        schedule => "* * * * *"
+        statement_filepath => "/etc/logstash/sql_queries/mbss_weekly.sql"
+ }
+
+ jdbc {
+        tags => ["mbss_full_latestdate"]
+        clean_run => true
+        jdbc_connection_string => "jdbc:postgresql://localhost:5432/{{postgres_db}}"
+        jdbc_user => "{{postgres_user}}"
+        jdbc_password => "{{postgres_user_password}}"
+        jdbc_validate_connection => true
+        jdbc_driver_library => "/jdbc_driver/postgresql-9.4-1201-jdbc41.jar"
+        jdbc_driver_class => "org.postgresql.Driver"
+        schedule => "* * * * *"
+        statement_filepath => "/etc/logstash/sql_queries/mbss_full_latestdate.sql"
+ }
+
+ jdbc {
+        tags => ["mbss_checkno_complete"]
+        clean_run => true
+        jdbc_connection_string => "jdbc:postgresql://localhost:5432/{{postgres_db}}"
+        jdbc_user => "{{postgres_user}}"
+        jdbc_password => "{{postgres_user_password}}"
+        jdbc_validate_connection => true
+        jdbc_driver_library => "/jdbc_driver/postgresql-9.4-1201-jdbc41.jar"
+        jdbc_driver_class => "org.postgresql.Driver"
+        schedule => "* * * * *"
+        statement_filepath => "/etc/logstash/sql_queries/mbss_checkno_complete.sql"
+ }
+
+ jdbc {
+        tags => ["mbss_inventory_status"]
+        clean_run => true
+        jdbc_connection_string => "jdbc:postgresql://localhost:5432/{{postgres_db}}"
+        jdbc_user => "{{postgres_user}}"
+        jdbc_password => "{{postgres_user_password}}"
+        jdbc_validate_connection => true
+        jdbc_driver_library => "/jdbc_driver/postgresql-9.4-1201-jdbc41.jar"
+        jdbc_driver_class => "org.postgresql.Driver"
+        schedule => "* * * * *"
+        statement_filepath => "/etc/logstash/sql_queries/mbss_inventory_status.sql"
+ }
+
+ jdbc {
+        tags => ["consolidated_nc_checkno_report"]
+        clean_run => true
+        jdbc_connection_string => "jdbc:postgresql://localhost:5432/{{postgres_db}}"
+        jdbc_user => "{{postgres_user}}"
+        jdbc_password => "{{postgres_user_password}}"
+        jdbc_validate_connection => true
+        jdbc_driver_library => "/jdbc_driver/postgresql-9.4-1201-jdbc41.jar"
+        jdbc_driver_class => "org.postgresql.Driver"
+        schedule => "* * * * *"
+        statement_filepath => "/etc/logstash/sql_queries/consolidated_nc_checkno_report.sql"
+ }
+
+}

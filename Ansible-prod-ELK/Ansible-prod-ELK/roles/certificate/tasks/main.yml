@@ -1,0 +1,56 @@
+---
+- name: "Creating CRT Directory"
+  file:
+    path: /etc/ssl/crt
+    state: directory
+    group: root
+    owner: root
+  register: crt_directory
+  
+- name: "Copying Dependency"
+  copy:
+    src: "files/dependency"
+    dest: "/tmp/"
+  register: Dependency
+  tags: [webserver]
+
+# - name: "Installing Pip"
+#   command: python /tmp/dependency/pip.py
+#   ignore_errors: true
+#   tags: [webserver]
+# - name: "Installing pip"
+#   yum:
+#     name: python-pip
+#     state: latest
+#   ignore_errors: true
+
+# - name: "Installing Dependency"
+#   pip:
+#     name: /tmp/dependency/pyOpenSSL-0.15.1.tar.gz
+#   ignore_errors: true
+#   become: yes
+#   tags: [webserver]
+#    no_log: true
+
+- name: Generating an OpenSSL private key
+  openssl_privatekey:
+    path: /etc/ssl/crt/private.key
+    size: 2048
+  tags: [webserver]
+
+- name: Generate an OpenSSL Certificate Signing Request
+  openssl_csr:
+    path: /etc/ssl/crt/certificate.csr
+    privatekey_path: /etc/ssl/crt/private.key
+    common_name: example.com
+  ignore_errors: true
+  tags: [webserver]
+
+- name: Generate a Self Signed OpenSSL certificate
+  openssl_certificate:
+    path: /etc/ssl/crt/certificate.crt
+    privatekey_path: /etc/ssl/crt/private.key
+    csr_path: /etc/ssl/crt/certificate.csr
+    provider: selfsigned
+  ignore_errors: true
+  tags: [webserver]

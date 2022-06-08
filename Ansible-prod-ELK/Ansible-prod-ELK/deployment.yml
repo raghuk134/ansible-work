@@ -1,0 +1,11 @@
+---
+-
+  hosts: webserver
+  name: "Playbook for Importing Dashbords and DB Role Creation"
+  become: yes
+  become_user: root
+  vars_files:
+    - defaults/main.yml
+  roles:
+   # - { role: postgres_password_setup}
+    - { role: es_initialize}

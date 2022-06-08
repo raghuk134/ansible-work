@@ -1,0 +1,58 @@
+---
+- name: Copying Installer
+  become: yes
+  copy:
+    src: "files/metricbeat-{{version}}.rpm"
+    dest: "/tmp/metricbeat-{{version}}.rpm"
+  tags: [metricbeat]  
+- name: Installing Metricbeat
+  become: yes
+  yum:
+    name: /tmp/metricbeat-{{version}}.rpm
+    state: present
+  ignore_errors: true
+  tags: [metricbeat]
+
+- name: Deleting Unnecessary Dashboards
+  become: yes
+  file:
+    path: "/usr/share/metricbeat/kibana/7/dashboard"
+    state: absent
+  tags: [metricbeat]
+- name: Creating Directory
+  become: yes
+  file:
+    path: "/usr/share/metricbeat/kibana/7/dashboard"
+    state: directory
+  tags: [metricbeat]
+  
+- name: Importing Dashboards
+  copy:
+    src: "files/{{item}}"
+    dest: "/usr/share/metricbeat/kibana/7/dashboard/{{item}}"
+  with_items:
+    - Metricbeat-containers-overview.json
+    - Metricbeat-host-overview.json
+    - Metricbeat-system-overview.json
+  tags: [metricbeat]
+
+- name: Copying Configuration
+  template:
+    src: "files/metricbeat.j2"
+    dest: "/etc/metricbeat/metricbeat.yml"
+  notify: restart_metricbeat
+
+- name: Enabling Service
+  become: yes
+  systemd:
+    name: metricbeat
+    state: started
+    enabled: yes
+  ignore_errors: true
+
+- name: Setting Up Dashboards
+  become: yes
+  command: /bin/metricbeat setup -e -E setup.kibana.host=127.0.0.1:5601
+  delegate_to: "{{monitoring_dashboard}}"
+  run_once: true
+  ignore_errors: true

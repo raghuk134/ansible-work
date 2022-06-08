@@ -1,0 +1,51 @@
+#!/bin/bash
+psql postgresql://{{postgres_user}}:{{postgres_user_password}}@{{db_ip}}/{{postgres_db}} << EOF
+        CREATE TABLE check_no (
+        id SERIAL PRIMARY KEY NOT NULL,
+        "CHECK NO." VARCHAR ( 50 ),
+        "CATEGORY" VARCHAR ( 500 ),
+        "Control Name" VARCHAR ( 500 ),
+        "Control Description" VARCHAR ( 1000 ),
+        "Control Impact" VARCHAR ( 1000 ),
+        "Version Name" VARCHAR ( 50 ),
+        "Version-Date" VARCHAR ( 50 ),
+        "ANSIBLE" VARCHAR ( 100 )
+        );
+EOF
+
+psql postgresql://{{postgres_user}}:{{postgres_user_password}}@{{db_ip}}/{{postgres_db}} << EOF
+        CREATE TABLE inventory_status (
+        id SERIAL PRIMARY KEY NOT NULL,
+        "HOSTNAME" VARCHAR ( 100 ),
+        "IP Address" VARCHAR ( 100 ),
+        "Server Status" VARCHAR ( 10 )
+        );
+
+EOF
+
+psql postgresql://{{postgres_user}}:{{postgres_user_password}}@{{db_ip}}/{{postgres_db}} << EOF
+        CREATE TABLE host_inventory (
+        id SERIAL PRIMARY KEY NOT NULL,
+        "HOSTNAME" VARCHAR ( 100 ),
+        "IP Address" VARCHAR ( 100 ),
+        "OS Platform" VARCHAR ( 50 ) ,
+        "OS Version" INT,
+        "Application" VARCHAR ( 50 ),
+        "Host Status" VARCHAR ( 10 ),
+        "Type" VARCHAR ( 10 )
+        );
+
+EOF
+
+psql postgresql://{{postgres_user}}:{{postgres_user_password}}@{{db_ip}}/{{postgres_db}} << EOF
+        CREATE TABLE mbss_output (
+         id SERIAL PRIMARY KEY,
+         "HOSTNAME" VARCHAR ( 50 ) NOT NULL,
+         "CHECK NO." VARCHAR ( 50 ),
+         "STATUS" VARCHAR ( 50 ),
+         "SCAN_DATE" VARCHAR ( 50 ) NOT NULL,
+         "SCAN_COMMAND" VARCHAR ( 2000 ),
+         "REMEDIATE_COMMAND" VARCHAR ( 2000 )
+        );
+
+EOF

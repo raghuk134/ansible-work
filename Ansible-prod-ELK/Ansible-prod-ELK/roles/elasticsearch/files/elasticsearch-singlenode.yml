@@ -1,0 +1,9 @@
+network.host: _eth0_
+cluster.name: {{cluster_name}}
+discovery.type: single-node
+node.name: es1
+http.port: 9200
+xpack.security.enabled: true
+path.logs: "/var/log/elasticsearch"
+path.data: "/usr/share/elasticsearch/data"
+path.repo: ["/backup"]

@@ -1,0 +1,4 @@
+- name: "kibana-restart"
+  systemd:
+    name: kibana
+    state: restarted

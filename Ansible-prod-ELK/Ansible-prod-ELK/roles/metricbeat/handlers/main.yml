@@ -1,0 +1,7 @@
+---
+- name: restart_metricbeat
+  become: yes
+  systemd:
+    name: metricbeat
+    state: restarted
+  ignore_errors: true

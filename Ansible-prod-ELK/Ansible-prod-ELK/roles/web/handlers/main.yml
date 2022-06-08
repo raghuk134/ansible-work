@@ -1,0 +1,7 @@
+- name: "nginx_restart"
+  systemd:
+    name: nginx
+    state: restarted
+  become: yes
+  register: restarted_nginx
+  tags: [webserver]

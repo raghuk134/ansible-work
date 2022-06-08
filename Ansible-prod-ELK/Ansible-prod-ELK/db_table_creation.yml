@@ -1,0 +1,10 @@
+---
+-
+  hosts: webserver
+  name: Setting Password For Database
+  become: yes
+  become_user: root
+  vars_files:
+   - defaults/main.yml
+  roles:
+   - { role: postgres_table_creation}

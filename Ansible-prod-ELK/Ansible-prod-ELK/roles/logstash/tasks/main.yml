@@ -1,0 +1,141 @@
+---
+- name: "Copying Logstash installer"
+  copy:
+    src: "files/logstash-{{version}}.rpm"
+    dest: "/tmp/logstash-{{version}}.rpm"
+  become: true
+  register: logstash_installer_copied
+  tags: [logstash]
+
+- name: "Installing Logstash"
+  yum: 
+    name: /tmp/logstash-{{version}}.rpm
+
+- name: "Configuring logstash"
+  copy:
+    src: files/logstash.yml 
+    dest: /etc/logstash/logstash.yml
+  register: logstash_configure
+  become: yes
+  notify: logstash-restart
+  tags: [logstash]
+- name: "Removing Existing logstash configuration file"
+  become: yes
+  file:
+    path: "/etc/logstash/conf.d/input.conf"
+    state: absent
+  ignore_errors: true
+
+- name: "Removing Existing logstash configuration file"
+  become: yes
+  file:
+    path: "/etc/logstash/conf.d/filter.conf"
+    state: absent
+  ignore_errors: true
+- name: "Removing Existing logstash configuration file"
+  become: yes
+  file:
+    path: "/etc/logstash/conf.d/elasticsearch-output.conf"
+    state: absent
+  ignore_errors: true
+  
+# - name: "Pipeline Configuration"
+#   copy: 
+#     src: "files/conf.d"
+#     dest: "/etc/logstash/"
+#   become: yes
+#   register: pipeline_config
+
+- name: "checking for jdbc_driver"
+  file:
+    path: /jdbc_driver
+    group: root
+    owner: root
+    state: directory
+  become: yes
+  register: jdbc_driver_directory
+
+- name: "copying jdbc_driver"
+  copy:
+    src: "files/postgresql-9.4-1201-jdbc41.jar"
+    dest: "/jdbc_driver/postgresql-9.4-1201-jdbc41.jar"
+  become: yes
+  register: jdbc_driver_copied
+  
+- name: "Jvm Config logstash"
+  template:
+    src: files/jvm.options 
+    dest: /etc/logstash/jvm.options
+  register: logstash_jvm
+  become: yes
+  notify: logstash-restart
+  tags: [logstash]
+
+- name: "Checking For logstash-filters"
+  file:
+    path: "/logstash-ruby-filters"
+    state: directory
+  become: yes
+  register: ruby_filter
+  tags: [logstash]
+
+- name: "Copying Filters"
+  copy:
+    src: "files/id.rb"
+    dest: "/logstash-ruby-filters/id.rb"
+  become: yes
+  register: ruby_filter_id
+  tags: [logstash] 
+
+- name: "Creating Logstash-Service"
+  copy:
+    src: files/logstash.service
+    dest: /etc/systemd/system/logstash.service
+  become: yes
+  register: service_logstash
+  tags: [logstash]
+
+- name: Input Configuration
+  template: 
+    src: "files/template/01-input.j2"
+    dest: "/etc/logstash/conf.d/01-input.conf"
+  become: yes
+  register: input_config
+  tags: [logstash]
+  
+- name: "Output Configuration"
+  template:
+    src: "files/template/30-elasticsearch-output.j2"
+    dest: "/etc/logstash/conf.d/30-elasticsearch-output.conf"
+  become: yes
+  register: Output_config
+
+- name: "sql_query"
+  copy:
+    src: "files/sql_queries"
+    dest: "/etc/logstash/"
+  register: sql_query
+  ignore_errors: true
+
+- name: reload systemd configuration
+  become: yes
+  systemd:
+    daemon_reload: yes
+  tags: [logstash]
+  ignore_errors: true
+
+- name: "daemon-reload"
+  become: true
+  shell: systemctl daemon-reload
+  args:
+    executable: /bin/bash
+  register: daemon
+  when: service_logstash.changed
+  tags: [logstash]
+
+- name: "Enabling logstash Service"
+  systemd:
+    name: logstash
+    state: started
+    enabled: yes
+  tags: [logstash]

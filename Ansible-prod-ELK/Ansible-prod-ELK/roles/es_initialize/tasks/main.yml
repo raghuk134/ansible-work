@@ -1,0 +1,28 @@
+---
+- name: "Dashboard Initialization"
+  copy: 
+    src: "files/elastic_json_files"
+    dest: "/tmp/"
+  become: true
+
+- name: "Importing Dashboards"
+  become: yes
+  shell: 'curl -X POST -u {{elastic_user}}:{{elastic_password}} "127.0.0.1:5601/api/saved_objects/_import" -H "kbn-xsrf: true" --form file=@{{ item }}'
+  no_log: true
+  ignore_errors: true
+  with_items:
+    - "/tmp/elastic_json_files/Dashboards/Admin_Dashboard.ndjson"
+    - "/tmp/elastic_json_files/Dashboards/IBM_Compliance_Dashboard.ndjson"
+    - "/tmp/elastic_json_files/Dashboards/Not_Reporting_Server_Details.ndjson"
+
+- name: "Creating Backup Repository"
+  become: yes
+  shell:  'curl -X PUT -u {{ elastic_user }}:{{ elastic_password }} "http://{{es1_ip}}:9200/_snapshot/my_backup_repo" -H "Content-Type: application/json" --data-binary @/tmp/elastic_json_files/repository.json'
+  no_log: true
+  ignore_errors: true
+
+- name: "Creating Backup Policy"
+  become: yes
+  shell: 'curl -X PUT -u {{elastic_user}}:{{elastic_password}} "http://{{es1_ip}}:9200/_slm/policy/daily-snapshots" -H "Content-Type: application/json" --data-binary @/tmp/elastic_json_files/backup_policy.json'
+  no_log: true
+  ignore_errors: true

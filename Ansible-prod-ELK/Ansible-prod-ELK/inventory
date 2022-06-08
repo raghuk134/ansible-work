@@ -1,0 +1,2 @@
+es1 ansible_host= ansible_user=root
+webserver ansible_host= ansible_user=root

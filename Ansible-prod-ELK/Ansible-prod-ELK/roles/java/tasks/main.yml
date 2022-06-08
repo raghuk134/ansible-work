@@ -1,0 +1,14 @@
+---
+- name: "Copying JDK installer"
+  copy:
+    src: "files/jdk-11.0.8.rpm"
+    dest: "/tmp/jdk-11.0.8.rpm"
+  become: true
+  tags: [java]
+
+- name: "Installing Java"
+  yum:
+    name: /tmp/jdk-11.0.8.rpm
+    state: present
+  register: java_installed
+  tags: [java]

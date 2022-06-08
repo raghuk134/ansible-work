@@ -1,0 +1,10 @@
+---
+
+- hosts: webserver
+  name: "Installing ELK on RHEL"
+  become: yes
+  become_user: root
+  vars_files:
+     - defaults/main.yml
+  roles:
+    - {role: cronjob}
